@@ -1,0 +1,54 @@
+
+<div class="container d-flex h-100">
+  <div class="row justify-content-center align-self-center">
+    <span>Enter a phone number to get all possible alphanumeric combination for the phone number. You will need to enter
+      7 or 10 digit phone number. Phone number must not start with 0.
+    </span>
+    <form [formGroup]="angForm" novalidate>
+      <div class="row justify-content-center display:inline-block">
+        <label class="font-weight-bold">Phone Number:
+          <input class="form-control" name= "phoneNumber" formControlName="phoneNumber" [(ngModel)] ="phoneNumber" pattern="^[1-9](\d{6}|\d{9})$" >
+        </label>
+
+      </div>
+      <div *ngIf="angForm.controls['phoneNumber'].invalid && (angForm.controls['phoneNumber'].dirty || angForm.controls['phoneNumber'].touched)" class="alert alert-danger">
+        <div *ngIf="angForm.controls['phoneNumber'].errors.required">
+          Phone Number is required.
+        </div>
+        <div *ngIf="angForm.controls['phoneNumber'].errors.pattern">
+          Phone Number must be of 7 or 10 digits. Phone number can not start with '0'.
+        </div>
+      </div>
+
+      <button type="button" (click)="getPage(1)"
+              [disabled]="angForm.pristine || angForm.invalid" class="btn btn-success">
+        Search
+      </button>
+    </form>
+  </div>
+</div>
+
+
+
+<div class="container d-flex h-100">
+  <div class="row justify-content-center align-self-center">
+    <div class="col-md-12" *ngIf="showResult">
+      <div *ngIf="result | async as items ; else loading;">
+      Total number of combinations : {{totalResult}}
+      <ul style="list-style-type: none">
+        <li *ngFor="let item of items | paginate: { itemsPerPage: pageSize, currentPage: p , totalItems:totalResult }; let even=even; let odd=odd;" [ngStyle]="odd ? {backgroundColor:'#D3D3D3'} : {backgroundColor:'#FFFFFF'}"> {{item}} </li>
+      </ul>
+
+      <pagination-controls  (pageChange)= "getPage($event)" ></pagination-controls>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-12" *ngIf="showError">
+    <span [ngStyle]="{color:'#FF0000'}">Error occurred while fetching combinations.</span>
+  </div>
+</div>
+
+<ng-template #loading>Loading Combinations...</ng-template>
+
+
+
